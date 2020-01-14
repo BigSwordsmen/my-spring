@@ -56,11 +56,8 @@ public class ClassScanner {
                 String classPath = f.getPath();
                 if (classPath.endsWith(".class")) {
                     String classFullName = classPath.replace("\\", ".").substring(0, classPath.length() - 6);
-                    System.out.println(classFullName);
                     int index = classFullName.indexOf("classes") + 8;
                     // D:.IdeaProjects.my-spring.test.target.classes.com.zj.spring.Application
-                    System.out.println(classFullName.substring(index));
-                    System.out.println("-----------------------------");
                     classList.add(Class.forName(classFullName.substring(index)));
                 }
             }
