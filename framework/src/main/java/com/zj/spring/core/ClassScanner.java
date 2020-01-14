@@ -22,8 +22,7 @@ public class ClassScanner {
 
     public static List<Class<?>> classList = new ArrayList<>();
 
-    public static /*List<Class<?>> */ void scanClasses(String packageName) throws IOException, ClassNotFoundException {
-        //List<Class<?>> classList = new ArrayList<>();
+    public static void scanClasses(String packageName) throws IOException, ClassNotFoundException {
         String path = packageName.replace(".", "/");
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Enumeration<URL> resources = classLoader.getResources(path);
@@ -33,21 +32,19 @@ public class ClassScanner {
             if (resource.getProtocol().contains("jar")) {
                 JarURLConnection jarURLConnection = (JarURLConnection) resource.openConnection();
                 String jarFilePath = jarURLConnection.getJarFile().getName();
-                classList.addAll(getClassesFromJar(jarFilePath, path));
+                getClassesFromJar(jarFilePath, path);
             } else if (resource.getProtocol().contains("file")) {
                 System.out.println("以file开头的类文件");
                 File f = new File(resource.getPath());
-                //classList.addAll(func(f));
                 func(f);
             } else {
                 System.out.println("未找到符合条件的类路径");
             }
         }
-       // return classList;
     }
 
-    private static /*List<Class<?>>*/ void func(File file) throws ClassNotFoundException {
-        // List<Class<?>> classes = new ArrayList<>();
+    private static void func(File file) throws ClassNotFoundException {
+        // List<Class<?>> classes = new ArrayList<>(); 此处不能new，递归调用会没每次都new，导致加载不到
         File[] files = file.listFiles();
         for (File f : files) {
             //若是目录，则递归打印该目录下的文件
@@ -61,7 +58,6 @@ public class ClassScanner {
                     String classFullName = classPath.replace("\\", ".").substring(0, classPath.length() - 6);
                     System.out.println(classFullName);
                     int index = classFullName.indexOf("classes") + 8;
-                    // System.out.println(index);
                     // D:.IdeaProjects.my-spring.test.target.classes.com.zj.spring.Application
                     System.out.println(classFullName.substring(index));
                     System.out.println("-----------------------------");
@@ -69,12 +65,10 @@ public class ClassScanner {
                 }
             }
         }
-        // return classList;
     }
 
 
-    private static List<Class<?>> getClassesFromJar(String jarFilePath, String path) throws IOException, ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
+    private static void getClassesFromJar(String jarFilePath, String path) throws IOException, ClassNotFoundException {
         JarFile jarFile = new JarFile(jarFilePath);
         Enumeration<JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
@@ -83,9 +77,8 @@ public class ClassScanner {
             String entryName = jarEntry.getName();
             if (entryName.startsWith(path) && entryName.endsWith(".class")) {
                 String classFullName = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                classes.add(Class.forName(classFullName));
+                classList.add(Class.forName(classFullName));
             }
         }
-        return classes;
     }
 }
