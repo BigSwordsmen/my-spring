@@ -1,7 +1,3 @@
-/**
- * fshows.com
- * Copyright (C) 2013-2020 All Rights Reserved.
- */
 package com.test;
 
 import java.io.File;
